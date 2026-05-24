@@ -1,8 +1,15 @@
-from turtle import title
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-app = FastAPI(title="Lore Bot API")
+from app.api.routes import router
 
-@app.get("/")
-def root():
-    return {"message": "Lore Bot is online"}
+app = FastAPI(title="Lore Bot v0.1")
+
+app.include_router(router)
+
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lore Bot Control Panel</title>
+    <style>
+        body {
+            font-family: Arial;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: 30%;
+        }
+
+        textarea, input {
+            width: 100%;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ASK PANEL -->
+<div class="panel">
+    <h2>Ask Lore</h2>
+
+    <textarea id="question" rows="5" placeholder="Ask something..."></textarea>
+    <br><br>
+
+    <button onclick="askLore()">Ask</button>
+
+    <pre id="askResult"></pre>
+</div>
+
+<!-- ADD PANEL -->
+<div class="panel">
+    <h2>Add Lore</h2>
+
+    <input id="name" placeholder="Name" />
+    <br><br>
+
+    <textarea id="lore" rows="5" placeholder="Lore..."></textarea>
+    <br><br>
+
+    <button onclick="addLore()">Save</button>
+
+    <pre id="addResult"></pre>
+</div>
+
+<!-- VIEW PANEL -->
+<div class="panel">
+    <h2>All Lore</h2>
+
+    <button onclick="loadLore()">Refresh</button>
+
+    <pre id="loreData"></pre>
+</div>
+
+<script>
+
+// ---------------- ASK ----------------
+async function askLore() {
+    const question = document.getElementById("question").value;
+
+    const res = await fetch("/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question})
+    });
+
+    const data = await res.json();
+
+    document.getElementById("askResult").innerText =
+        JSON.stringify(data, null, 2);
+}
+
+
+// ---------------- ADD ----------------
+async function addLore() {
+    const name = document.getElementById("name").value;
+    const lore = document.getElementById("lore").value;
+
+    const res = await fetch("/add_lore", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name, lore})
+    });
+
+    const data = await res.json();
+
+    document.getElementById("addResult").innerText =
+        JSON.stringify(data, null, 2);
+}
+
+
+// ---------------- LOAD ALL LORE ----------------
+async function loadLore() {
+    const res = await fetch("/lore");
+    const data = await res.json();
+
+    document.getElementById("loreData").innerText =
+        JSON.stringify(data, null, 2);
+}
+
+// auto-load on start
+loadLore();
+
+</script>
+
+</body>
+</html>
